@@ -177,4 +177,4 @@ For questions or suggestions, please open an issue in the project repository.
 
 ---
 
-**Note**: This is a educational project inspired by Spotify's interface. It is not affiliated with or endorsed by Spotify AB.
+**Note**: This is a educational project inspired by Spotify's interface. It is not affiliated with or endorsed by Spotify AB."# Music-player" 
