@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: white;
+            padding: 20px;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #333;
+            border-radius: 8px;
+        }
+        button {
+            background: #1db954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1ed760;
+        }
+        audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #2ecc71;
+        }
+        .error {
+            background: #e74c3c;
+        }
+        .warning {
+            background: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Music Player Debug Test</h1>
+    
+    <div class="debug-section">
+        <h2>🔍 Audio File Test</h2>
+        <p>Testing if audio files can be loaded and played:</p>
+        
+        <div id="audioTests"></div>
+        
+        <button onclick="testAllAudio()">Test All Audio Files</button>
+        <button onclick="testSingleAudio()">Test Single Audio</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🎛️ Manual Audio Control</h2>
+        <audio id="manualAudio" controls>
+            <source src="assets/audio/Aabaad_Barbaad.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <br>
+        <button onclick="playManual()">Play Manual</button>
+        <button onclick="pauseManual()">Pause Manual</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📊 Test Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const audioFiles = [
+            'assets/audio/Aabaad_Barbaad.mp3',
+            'assets/audio/Aankh_Marey.mp3',
+            'assets/audio/Baarish.mp3',
+            'assets/audio/Channa_Mereya.mp3',
+            'assets/audio/Dilbar.mp3',
+            'assets/audio/Genda_Phool.mp3',
+            'assets/audio/Hawayein.mp3',
+            'assets/audio/Lut_Gaye.mp3'
+        ];
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            results.appendChild(div);
+            console.log(message);
+        }
+
+        async function testSingleAudio() {
+            log('🎵 Testing single audio file...', 'info');
+            
+            const audio = new Audio('assets/audio/Aabaad_Barbaad.mp3');
+            
+            audio.addEventListener('loadstart', () => log('📁 Load started', 'info'));
+            audio.addEventListener('loadeddata', () => log('📊 Data loaded', 'success'));
+            audio.addEventListener('canplay', () => log('▶️ Can play', 'success'));
+            audio.addEventListener('error', (e) => log(`❌ Error: ${e.message}`, 'error'));
+            
+            try {
+                audio.load();
+                const playPromise = audio.play();
+                
+                if (playPromise) {
+                    await playPromise;
+                    log('✅ Audio playing successfully!', 'success');
+                    
+                    setTimeout(() => {
+                        audio.pause();
+                        log('⏹️ Audio paused', 'info');
+                    }, 3000);
+                }
+            } catch (error) {
+                log(`❌ Play failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAllAudio() {
+            log('🔍 Testing all audio files...', 'info');
+            
+            for (const file of audioFiles) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (response.ok) {
+                        log(`✅ ${file} - File exists`, 'success');
+                    } else {
+                        log(`❌ ${file} - File not found (${response.status})`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ ${file} - Network error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function playManual() {
+            const audio = document.getElementById('manualAudio');
+            audio.play().then(() => {
+                log('✅ Manual audio playing', 'success');
+            }).catch(error => {
+                log(`❌ Manual play failed: ${error.message}`, 'error');
+            });
+        }
+
+        function pauseManual() {
+            const audio = document.getElementById('manualAudio');
+            audio.pause();
+            log('⏸️ Manual audio paused', 'info');
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            log('🚀 Debug page loaded', 'info');
+            setTimeout(testAllAudio, 1000);
+        });
+    </script>
+</body>
+</html>

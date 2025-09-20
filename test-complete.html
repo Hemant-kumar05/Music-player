@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynk Music - Complete Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #000000, #111111);
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .test-section {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .info { color: #2196F3; }
+        .test-result {
+            margin: 10px 0;
+            padding: 8px;
+            border-radius: 4px;
+            background: #333;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #333;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #555;
+        }
+        .feature-card.working {
+            border-color: #4CAF50;
+            background: #1e4620;
+        }
+        .feature-card.broken {
+            border-color: #f44336;
+            background: #4e1e1e;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            margin: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #E55A2B;
+        }
+        #testOutput {
+            background: #000;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Wynk Music - Complete System Test</h1>
+    
+    <div class="test-section">
+        <h2>🚀 Quick Test</h2>
+        <button onclick="runCompleteTest()">🧪 Run Complete Test</button>
+        <button onclick="testPlayback()">▶️ Test Playback</button>
+        <button onclick="testVisualizer()">🎨 Test Visualizer</button>
+        <button onclick="testModals()">📱 Test Modals</button>
+        <button onclick="testControls()">🎛️ Test Controls</button>
+        <button onclick="testSearch()">🔍 Test Search</button>
+    </div>
+
+    <div class="test-section">
+        <h2>📊 Feature Status</h2>
+        <div class="feature-grid" id="featureGrid">
+            <!-- Features will be populated here -->
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>📝 Test Output</h2>
+        <div id="testOutput"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🎧 Audio Files Status</h2>
+        <div id="audioStatus">
+            <p class="info">⏳ Checking audio files...</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>🖥️ DOM Elements Check</h2>
+        <div id="domStatus">
+            <p class="info">⏳ Checking DOM elements...</p>
+        </div>
+    </div>
+
+    <script src="src/scripts/main.js"></script>
+    <script>
+        // Test output logging
+        const testOutput = document.getElementById('testOutput');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const color = {
+                'info': '#2196F3',
+                'success': '#4CAF50',
+                'error': '#f44336',
+                'warning': '#ff9800'
+            }[type] || '#ffffff';
+            
+            testOutput.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            testOutput.scrollTop = testOutput.scrollHeight;
+        }
+
+        // Feature definitions
+        const features = [
+            { name: 'Music Player Instance', test: () => !!window.musicPlayer },
+            { name: 'Playlist Loaded', test: () => window.musicPlayer?.playlist?.length > 0 },
+            { name: 'Audio Element', test: () => !!document.getElementById('audioPlayer') },
+            { name: 'Play Button', test: () => !!document.getElementById('playBtn') },
+            { name: 'Music Grid', test: () => !!document.getElementById('musicGrid') },
+            { name: 'Volume Slider', test: () => !!document.getElementById('volumeSlider') },
+            { name: 'Progress Bar', test: () => !!document.querySelector('.progress-bar') },
+            { name: 'Search Input', test: () => !!document.getElementById('search-input') },
+            { name: 'Lyrics Modal', test: () => !!document.getElementById('lyricsModal') },
+            { name: 'Visualizer Modal', test: () => !!document.getElementById('visualizerModal') },
+            { name: 'Visualizer Canvas', test: () => !!document.getElementById('visualizerCanvas') },
+            { name: 'Start Music Button', test: () => !!document.getElementById('startMusicVisualizerBtn') }
+        ];
+
+        function updateFeatureStatus() {
+            const featureGrid = document.getElementById('featureGrid');
+            featureGrid.innerHTML = '';
+            
+            features.forEach(feature => {
+                const isWorking = feature.test();
+                const card = document.createElement('div');
+                card.className = `feature-card ${isWorking ? 'working' : 'broken'}`;
+                card.innerHTML = `
+                    <h4>${feature.name}</h4>
+                    <div class="${isWorking ? 'success' : 'error'}">
+                        ${isWorking ? '✅ Working' : '❌ Not Working'}
+                    </div>
+                `;
+                featureGrid.appendChild(card);
+            });
+        }
+
+        function runCompleteTest() {
+            log('🧪 Starting Complete System Test', 'info');
+            
+            // Test 1: Basic Initialization
+            log('📋 Test 1: Basic Initialization', 'info');
+            if (window.musicPlayer) {
+                log('✅ Music Player initialized', 'success');
+                log(`📊 Playlist: ${window.musicPlayer.playlist.length} tracks`, 'info');
+            } else {
+                log('❌ Music Player not initialized', 'error');
+                return;
+            }
+
+            // Test 2: DOM Elements
+            log('📋 Test 2: DOM Elements', 'info');
+            const criticalElements = [
+                'audioPlayer', 'playBtn', 'musicGrid', 'volumeSlider', 
+                'currentTrackName', 'currentTrackArtist', 'currentTrackImage'
+            ];
+            
+            criticalElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    log(`✅ ${id} found`, 'success');
+                } else {
+                    log(`❌ ${id} missing`, 'error');
+                }
+            });
+
+            // Test 3: Audio Files
+            log('📋 Test 3: Audio Files', 'info');
+            testAudioFiles();
+
+            // Test 4: Event Listeners
+            log('📋 Test 4: Event Listeners', 'info');
+            const playBtn = document.getElementById('playBtn');
+            if (playBtn && playBtn.onclick) {
+                log('✅ Play button has event listener', 'success');
+            } else if (playBtn) {
+                log('⚠️ Play button found but no direct onclick', 'warning');
+            } else {
+                log('❌ Play button not found', 'error');
+            }
+
+            // Test 5: Modal System
+            log('📋 Test 5: Modal System', 'info');
+            ['lyricsModal', 'visualizerModal'].forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    log(`✅ ${modalId} found`, 'success');
+                } else {
+                    log(`❌ ${modalId} missing`, 'error');
+                }
+            });
+
+            updateFeatureStatus();
+            log('🎉 Complete test finished!', 'info');
+        }
+
+        function testPlayback() {
+            log('▶️ Testing Playback', 'info');
+            
+            if (window.musicPlayer && window.musicPlayer.playlist.length > 0) {
+                try {
+                    window.musicPlayer.playTrack(0);
+                    log('✅ Playback test initiated', 'success');
+                    
+                    setTimeout(() => {
+                        if (window.musicPlayer.currentTrack) {
+                            log(`🎵 Currently playing: ${window.musicPlayer.currentTrack.title}`, 'success');
+                        }
+                    }, 1000);
+                } catch (error) {
+                    log(`❌ Playback test failed: ${error.message}`, 'error');
+                }
+            } else {
+                log('❌ No music player or tracks available', 'error');
+            }
+        }
+
+        function testVisualizer() {
+            log('🎨 Testing Visualizer', 'info');
+            
+            try {
+                if (window.musicPlayer && window.musicPlayer.initializeVisualizer) {
+                    window.musicPlayer.initializeVisualizer();
+                    log('✅ Visualizer initialized', 'success');
+                    
+                    if (window.musicPlayer.startVisualizer) {
+                        window.musicPlayer.startVisualizer();
+                        log('✅ Visualizer started', 'success');
+                    }
+                } else {
+                    log('❌ Visualizer functions not available', 'error');
+                }
+            } catch (error) {
+                log(`❌ Visualizer test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function testModals() {
+            log('📱 Testing Modals', 'info');
+            
+            // Test lyrics modal
+            const lyricsModal = document.getElementById('lyricsModal');
+            if (lyricsModal) {
+                lyricsModal.style.display = 'flex';
+                log('✅ Lyrics modal opened', 'success');
+                setTimeout(() => {
+                    lyricsModal.style.display = 'none';
+                    log('✅ Lyrics modal closed', 'success');
+                }, 2000);
+            } else {
+                log('❌ Lyrics modal not found', 'error');
+            }
+
+            // Test visualizer modal
+            setTimeout(() => {
+                const visualizerModal = document.getElementById('visualizerModal');
+                if (visualizerModal) {
+                    visualizerModal.style.display = 'flex';
+                    log('✅ Visualizer modal opened', 'success');
+                    setTimeout(() => {
+                        visualizerModal.style.display = 'none';
+                        log('✅ Visualizer modal closed', 'success');
+                    }, 2000);
+                } else {
+                    log('❌ Visualizer modal not found', 'error');
+                }
+            }, 1000);
+        }
+
+        function testControls() {
+            log('🎛️ Testing Controls', 'info');
+            
+            const controls = [
+                'playBtn', 'prevBtn', 'nextBtn', 'shuffleBtn', 
+                'repeatBtn', 'volumeBtn', 'lyricsBtn', 'visualizerBtn'
+            ];
+            
+            controls.forEach(id => {
+                const control = document.getElementById(id);
+                if (control) {
+                    log(`✅ ${id} found and clickable`, 'success');
+                    // Test click (safely)
+                    try {
+                        control.click();
+                        log(`✅ ${id} click test passed`, 'success');
+                    } catch (error) {
+                        log(`⚠️ ${id} click test failed: ${error.message}`, 'warning');
+                    }
+                } else {
+                    log(`❌ ${id} not found`, 'error');
+                }
+            });
+        }
+
+        function testSearch() {
+            log('🔍 Testing Search', 'info');
+            
+            const searchInput = document.getElementById('search-input');
+            if (searchInput) {
+                searchInput.value = 'Bollywood';
+                const event = new Event('input', { bubbles: true });
+                searchInput.dispatchEvent(event);
+                log('✅ Search test completed', 'success');
+            } else {
+                log('❌ Search input not found', 'error');
+            }
+        }
+
+        function testAudioFiles() {
+            const audioStatus = document.getElementById('audioStatus');
+            let html = '';
+            let testCount = 0;
+            let passCount = 0;
+            
+            const testFiles = [
+                'assets/audio/Aabaad_Barbaad.mp3',
+                'assets/audio/Aankh_Marey.mp3',
+                'assets/audio/Baarish.mp3'
+            ];
+            
+            testFiles.forEach(file => {
+                testCount++;
+                const audio = new Audio();
+                audio.src = file;
+                
+                audio.addEventListener('canplay', () => {
+                    passCount++;
+                    html += `<p class="success">✅ ${file.split('/').pop()}</p>`;
+                    log(`✅ Audio file accessible: ${file}`, 'success');
+                    updateAudioStatus();
+                });
+                
+                audio.addEventListener('error', () => {
+                    html += `<p class="error">❌ ${file.split('/').pop()}</p>`;
+                    log(`❌ Audio file error: ${file}`, 'error');
+                    updateAudioStatus();
+                });
+            });
+            
+            function updateAudioStatus() {
+                audioStatus.innerHTML = html + `<p class="info">📊 ${passCount}/${testCount} files accessible</p>`;
+            }
+        }
+
+        function checkDOMElements() {
+            const domStatus = document.getElementById('domStatus');
+            let html = '';
+            
+            const elements = [
+                'musicGrid', 'playBtn', 'audioPlayer', 'currentTrackName',
+                'currentTrackArtist', 'currentTrackImage', 'volumeSlider',
+                'lyricsModal', 'visualizerModal', 'startMusicVisualizerBtn'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    html += `<p class="success">✅ ${id}</p>`;
+                } else {
+                    html += `<p class="error">❌ ${id}</p>`;
+                }
+            });
+            
+            domStatus.innerHTML = html;
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🔍 Test page loaded', 'info');
+            setTimeout(() => {
+                updateFeatureStatus();
+                checkDOMElements();
+                log('📋 Ready for testing!', 'info');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

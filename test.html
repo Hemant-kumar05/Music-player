@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success { background: #2d5a2d; }
+        .error { background: #5a2d2d; }
+        .warning { background: #5a5a2d; }
+        button {
+            background: #1db954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Music Player Test Suite</h1>
+    
+    <div class="test-section">
+        <h3>System Status</h3>
+        <div id="system-status"></div>
+        <button onclick="runSystemTests()">Run System Tests</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>Player Controls</h3>
+        <div id="player-status"></div>
+        <button onclick="testPlayerControls()">Test Player Controls</button>
+    </div>
+    
+    <div class="test-section">
+        <h3>File Upload</h3>
+        <input type="file" id="test-upload" accept="audio/*" multiple>
+        <button onclick="testFileUpload()">Test File Upload</button>
+        <div id="upload-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Theme Toggle</h3>
+        <button onclick="testThemeToggle()">Test Theme Toggle</button>
+        <div id="theme-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Storage</h3>
+        <button onclick="testStorage()">Test Local Storage</button>
+        <div id="storage-status"></div>
+    </div>
+
+    <script>
+        function addResult(containerId, message, type = 'success') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            container.appendChild(div);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        function runSystemTests() {
+            clearResults('system-status');
+            
+            // Check if main page is accessible
+            fetch('/')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('system-status', '✅ Main page accessible');
+                    } else {
+                        addResult('system-status', '❌ Main page not accessible', 'error');
+                    }
+                })
+                .catch(err => {
+                    addResult('system-status', '❌ Server error: ' + err.message, 'error');
+                });
+            
+            // Check CSS files
+            fetch('/src/styles/main.css')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('system-status', '✅ CSS file loaded');
+                    } else {
+                        addResult('system-status', '❌ CSS file missing', 'error');
+                    }
+                });
+            
+            // Check JS files
+            fetch('/src/scripts/main.js')
+                .then(response => {
+                    if (response.ok) {
+                        addResult('system-status', '✅ JavaScript file loaded');
+                    } else {
+                        addResult('system-status', '❌ JavaScript file missing', 'error');
+                    }
+                });
+        }
+
+        function testPlayerControls() {
+            clearResults('player-status');
+            
+            // Open main player in new window for testing
+            const playerWindow = window.open('/', 'musicplayer', 'width=1200,height=800');
+            
+            setTimeout(() => {
+                try {
+                    if (playerWindow.window.musicPlayer) {
+                        addResult('player-status', '✅ Music player object found');
+                        
+                        // Test basic properties
+                        const player = playerWindow.window.musicPlayer;
+                        addResult('player-status', `✅ Playlist loaded: ${player.playlist.length} tracks`);
+                        addResult('player-status', `✅ Volume: ${Math.round(player.volume * 100)}%`);
+                        addResult('player-status', `✅ Theme: ${player.currentTheme}`);
+                    } else {
+                        addResult('player-status', '❌ Music player object not found', 'error');
+                    }
+                } catch (err) {
+                    addResult('player-status', '❌ Error accessing player: ' + err.message, 'error');
+                }
+            }, 2000);
+        }
+
+        function testFileUpload() {
+            clearResults('upload-status');
+            
+            const fileInput = document.getElementById('test-upload');
+            if (fileInput.files.length === 0) {
+                addResult('upload-status', '⚠️ Please select audio files first', 'warning');
+                return;
+            }
+            
+            addResult('upload-status', `✅ ${fileInput.files.length} files selected`);
+            
+            // Check file types
+            for (let file of fileInput.files) {
+                if (file.type.startsWith('audio/')) {
+                    addResult('upload-status', `✅ ${file.name} - Valid audio file`);
+                } else {
+                    addResult('upload-status', `❌ ${file.name} - Invalid file type`, 'error');
+                }
+            }
+        }
+
+        function testThemeToggle() {
+            clearResults('theme-status');
+            
+            // Test theme detection
+            const isDark = !document.body.classList.contains('light-theme');
+            addResult('theme-status', `✅ Current theme detected: ${isDark ? 'dark' : 'light'}`);
+            
+            // Toggle theme
+            document.body.classList.toggle('light-theme');
+            const newTheme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+            addResult('theme-status', `✅ Theme toggled to: ${newTheme}`);
+            
+            // Toggle back
+            setTimeout(() => {
+                document.body.classList.toggle('light-theme');
+                addResult('theme-status', '✅ Theme toggle test completed');
+            }, 1000);
+        }
+
+        function testStorage() {
+            clearResults('storage-status');
+            
+            try {
+                // Test localStorage availability
+                const testKey = 'musicPlayerTest';
+                const testData = { test: true, timestamp: Date.now() };
+                
+                localStorage.setItem(testKey, JSON.stringify(testData));
+                const retrieved = JSON.parse(localStorage.getItem(testKey));
+                
+                if (retrieved && retrieved.test === true) {
+                    addResult('storage-status', '✅ Local storage write/read test passed');
+                } else {
+                    addResult('storage-status', '❌ Local storage data mismatch', 'error');
+                }
+                
+                localStorage.removeItem(testKey);
+                addResult('storage-status', '✅ Local storage cleanup completed');
+                
+                // Check for existing music player data
+                const playerData = localStorage.getItem('musicPlayerPreferences');
+                if (playerData) {
+                    const prefs = JSON.parse(playerData);
+                    addResult('storage-status', `✅ Found saved preferences: ${Object.keys(prefs).length} properties`);
+                } else {
+                    addResult('storage-status', '📝 No saved preferences found (normal for first run)');
+                }
+                
+            } catch (err) {
+                addResult('storage-status', '❌ Storage error: ' + err.message, 'error');
+            }
+        }
+
+        // Auto-run system tests on load
+        window.addEventListener('load', runSystemTests);
+    </script>
+</body>
+</html>

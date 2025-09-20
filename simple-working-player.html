@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Simple Music Player - Working</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .player-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-header {
+            margin-bottom: 30px;
+        }
+
+        .player-header h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .upload-area {
+            border: 3px dashed #4ecdc4;
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #ff6b6b;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .upload-area.dragover {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            font-size: 1.1rem;
+            padding: 15px 30px;
+        }
+
+        .audio-player {
+            margin: 20px 0;
+            display: none;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .current-song {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .current-song h3 {
+            color: #4ecdc4;
+            margin-bottom: 5px;
+        }
+
+        .playlist {
+            text-align: left;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .playlist-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .playlist-item:hover {
+            background: rgba(78, 205, 196, 0.3);
+        }
+
+        .playlist-item.active {
+            background: rgba(78, 205, 196, 0.5);
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .status {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <div class="player-header">
+            <h1>🎵 Simple Music Player</h1>
+            <p>100% Working - Add your MP3 files!</p>
+        </div>
+
+        <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📁</div>
+            <h3>Click here or Drag MP3 files</h3>
+            <p>MP3, WAV, M4A files supported</p>
+            <button class="btn">Choose Files</button>
+            <input type="file" id="fileInput" class="file-input" multiple accept="audio/*">
+        </div>
+
+        <div class="success" id="successMsg">
+            ✅ Files loaded successfully! Click on songs to play.
+        </div>
+
+        <div class="error" id="errorMsg">
+            ❌ Something went wrong. Try again or use different files.
+        </div>
+
+        <div class="current-song" id="currentSong">
+            <h3 id="songTitle">No song selected</h3>
+            <p id="songArtist">Select a song from playlist</p>
+        </div>
+
+        <div class="audio-player" id="audioPlayer">
+            <audio controls id="audio" style="width: 100%;">
+                Your browser does not support audio playback.
+            </audio>
+        </div>
+
+        <div class="playlist" id="playlist">
+            <h3 style="color: #4ecdc4; margin-bottom: 15px;">📋 Playlist:</h3>
+            <div id="playlistItems"></div>
+        </div>
+
+        <div class="status" id="status">
+            Ready to load music files...
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button class="btn btn-primary" onclick="openAdvancedPlayer()">
+                🚀 Open Advanced Player
+            </button>
+            <button class="btn" onclick="clearPlaylist()">
+                🗑️ Clear All
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentPlaylist = [];
+        let currentIndex = 0;
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const audio = document.getElementById('audio');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const currentSong = document.getElementById('currentSong');
+        const playlist = document.getElementById('playlist');
+        const playlistItems = document.getElementById('playlistItems');
+        const successMsg = document.getElementById('successMsg');
+        const errorMsg = document.getElementById('errorMsg');
+        const status = document.getElementById('status');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+            status.textContent = 'Drop files here...';
+        });
+
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            status.textContent = 'Ready to load music files...';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            status.textContent = 'Processing files...';
+            hideMessages();
+
+            const audioFiles = files.filter(file => 
+                file.type.startsWith('audio/') || 
+                file.name.toLowerCase().endsWith('.mp3') ||
+                file.name.toLowerCase().endsWith('.wav') ||
+                file.name.toLowerCase().endsWith('.m4a')
+            );
+
+            if (audioFiles.length === 0) {
+                showError('No audio files found! Please select MP3, WAV, or M4A files.');
+                return;
+            }
+
+            // Clear previous playlist
+            currentPlaylist = [];
+            playlistItems.innerHTML = '';
+
+            // Process each file
+            audioFiles.forEach((file, index) => {
+                const url = URL.createObjectURL(file);
+                const songData = {
+                    name: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+                    artist: 'Unknown Artist',
+                    file: file,
+                    url: url,
+                    size: (file.size / (1024 * 1024)).toFixed(2) + ' MB'
+                };
+
+                currentPlaylist.push(songData);
+                addToPlaylist(songData, index);
+            });
+
+            showSuccess(`${audioFiles.length} audio files loaded successfully!`);
+            showPlaylist();
+            status.textContent = `${audioFiles.length} songs ready to play`;
+
+            // Auto-play first song
+            if (currentPlaylist.length > 0) {
+                playSong(0);
+            }
+        }
+
+        function addToPlaylist(song, index) {
+            const item = document.createElement('div');
+            item.className = 'playlist-item';
+            item.innerHTML = `
+                <div>
+                    <strong>${song.name}</strong><br>
+                    <small>${song.artist} • ${song.size}</small>
+                </div>
+                <button class="btn" style="padding: 5px 10px; font-size: 0.8rem;" onclick="playSong(${index})">
+                    ▶️
+                </button>
+            `;
+            item.addEventListener('click', (e) => {
+                if (!e.target.closest('button')) {
+                    playSong(index);
+                }
+            });
+            playlistItems.appendChild(item);
+        }
+
+        function playSong(index) {
+            if (index < 0 || index >= currentPlaylist.length) return;
+
+            currentIndex = index;
+            const song = currentPlaylist[index];
+
+            // Update UI
+            document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+
+            songTitle.textContent = song.name;
+            songArtist.textContent = song.artist;
+
+            // Set audio source
+            audio.src = song.url;
+            
+            // Show player and current song
+            audioPlayer.style.display = 'block';
+            currentSong.style.display = 'block';
+
+            // Auto-play
+            audio.play().then(() => {
+                status.textContent = `Playing: ${song.name}`;
+            }).catch(error => {
+                console.error('Playback error:', error);
+                status.textContent = 'Click play button to start music';
+            });
+        }
+
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 3000);
+        }
+
+        function hideMessages() {
+            successMsg.style.display = 'none';
+            errorMsg.style.display = 'none';
+        }
+
+        function showPlaylist() {
+            playlist.style.display = 'block';
+        }
+
+        function clearPlaylist() {
+            currentPlaylist = [];
+            playlistItems.innerHTML = '';
+            audio.src = '';
+            audioPlayer.style.display = 'none';
+            currentSong.style.display = 'none';
+            playlist.style.display = 'none';
+            status.textContent = 'Playlist cleared. Ready to load new files...';
+            hideMessages();
+        }
+
+        function openAdvancedPlayer() {
+            window.open('complete-music-player.html', '_blank');
+        }
+
+        // Audio event listeners
+        audio.addEventListener('ended', () => {
+            const nextIndex = (currentIndex + 1) % currentPlaylist.length;
+            playSong(nextIndex);
+        });
+
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            showError('Error playing audio file. Try a different file.');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            status.textContent = '🎵 Simple Music Player ready! Add your MP3 files.';
+        });
+    </script>
+</body>
+</html>

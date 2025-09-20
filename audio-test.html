@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Test & Fix</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #4ecdc4;
+        }
+
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .test-btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .test-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+        }
+
+        .error {
+            background: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+        }
+
+        .volume-test {
+            margin: 20px 0;
+        }
+
+        .volume-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .fix-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            margin: 10px;
+        }
+
+        .open-player-btn {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            font-size: 1.2rem;
+            padding: 20px 40px;
+            margin-top: 30px;
+        }
+
+        .audio-test {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔊 Audio System Diagnostics</h1>
+        <p>चलिए आपके audio system को test करते हैं और fix करते हैं!</p>
+
+        <!-- System Check -->
+        <div class="test-section">
+            <h3>🔍 System Audio Check</h3>
+            <button class="test-btn" onclick="testSystemAudio()">Test System Audio Support</button>
+            <div id="systemResult"></div>
+        </div>
+
+        <!-- Volume Test -->
+        <div class="test-section">
+            <h3>🔊 Volume & Mute Test</h3>
+            <div class="volume-test">
+                <p>System Volume: <span id="volumeDisplay">?</span></p>
+                <input type="range" class="volume-slider" id="testVolume" min="0" max="100" value="70">
+                <button class="test-btn" onclick="testVolume()">Test Volume Level</button>
+                <button class="fix-btn" onclick="fixVolume()">Auto-Fix Volume</button>
+            </div>
+            <div id="volumeResult"></div>
+        </div>
+
+        <!-- Audio Context Test -->
+        <div class="test-section">
+            <h3>🎵 Audio Context Test</h3>
+            <button class="test-btn" onclick="testAudioContext()">Test Web Audio API</button>
+            <button class="fix-btn" onclick="fixAudioContext()">Fix Audio Context</button>
+            <div id="contextResult"></div>
+        </div>
+
+        <!-- Sound Test -->
+        <div class="test-section">
+            <h3>🎶 Actual Sound Test</h3>
+            <button class="test-btn" onclick="playTestSound()">Play Test Beep</button>
+            <button class="test-btn" onclick="playTestTone()">Play Test Tone</button>
+            <audio id="testAudio" preload="auto"></audio>
+            <div class="progress-bar" style="display: none;" id="audioProgress">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div id="soundResult"></div>
+        </div>
+
+        <!-- Browser Permissions -->
+        <div class="test-section">
+            <h3>🔐 Browser Permissions</h3>
+            <button class="test-btn" onclick="checkPermissions()">Check Audio Permissions</button>
+            <button class="fix-btn" onclick="requestPermissions()">Request Permissions</button>
+            <div id="permissionResult"></div>
+        </div>
+
+        <!-- Final Action -->
+        <div class="test-section">
+            <h3>🚀 All Fixed? Open Music Player</h3>
+            <button class="open-player-btn" onclick="openMusicPlayer()">
+                🎵 Open Music Player Now
+            </button>
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                सब कुछ ठीक होने के बाद यहाँ click करें
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let audioContext;
+        let testAudioElement;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            testAudioElement = document.getElementById('testAudio');
+            updateVolumeDisplay();
+            
+            // Auto-run basic checks
+            setTimeout(() => {
+                testSystemAudio();
+            }, 1000);
+        });
+
+        function updateVolumeDisplay() {
+            const volumeSlider = document.getElementById('testVolume');
+            const volumeDisplay = document.getElementById('volumeDisplay');
+            volumeDisplay.textContent = volumeSlider.value + '%';
+            
+            volumeSlider.addEventListener('input', function() {
+                volumeDisplay.textContent = this.value + '%';
+                if (testAudioElement) {
+                    testAudioElement.volume = this.value / 100;
+                }
+            });
+        }
+
+        function testSystemAudio() {
+            const result = document.getElementById('systemResult');
+            let tests = [];
+
+            // Check Audio API
+            if (window.Audio) {
+                tests.push('✅ HTML5 Audio API: Supported');
+            } else {
+                tests.push('❌ HTML5 Audio API: Not supported');
+            }
+
+            // Check Web Audio API
+            if (window.AudioContext || window.webkitAudioContext) {
+                tests.push('✅ Web Audio API: Available');
+            } else {
+                tests.push('❌ Web Audio API: Not available');
+            }
+
+            // Check Audio formats
+            const audio = new Audio();
+            if (audio.canPlayType('audio/mpeg')) {
+                tests.push('✅ MP3 Support: Yes');
+            } else {
+                tests.push('❌ MP3 Support: No');
+            }
+
+            // Check if audio is enabled
+            tests.push(`✅ Audio Element Created: ${testAudioElement ? 'Success' : 'Failed'}`);
+
+            const allGood = tests.every(test => test.includes('✅'));
+            result.innerHTML = `
+                <div class="${allGood ? 'success' : 'error'}">
+                    ${tests.join('<br>')}
+                    <br><br>
+                    <strong>${allGood ? '🎉 All audio systems are working!' : '⚠️ Some audio features may not work'}</strong>
+                </div>
+            `;
+        }
+
+        function testVolume() {
+            const result = document.getElementById('volumeResult');
+            const volume = document.getElementById('testVolume').value;
+            
+            if (testAudioElement) {
+                testAudioElement.volume = volume / 100;
+                
+                if (volume == 0) {
+                    result.innerHTML = '<div class="error">❌ Volume is at 0% - कोई आवाज नहीं आएगी!</div>';
+                } else if (volume < 30) {
+                    result.innerHTML = '<div class="warning">⚠️ Volume is very low - आवाज कम है!</div>';
+                } else {
+                    result.innerHTML = '<div class="success">✅ Volume level is good!</div>';
+                }
+            } else {
+                result.innerHTML = '<div class="error">❌ Audio element not found</div>';
+            }
+        }
+
+        function fixVolume() {
+            const volumeSlider = document.getElementById('testVolume');
+            const result = document.getElementById('volumeResult');
+            
+            volumeSlider.value = 70;
+            updateVolumeDisplay();
+            
+            if (testAudioElement) {
+                testAudioElement.volume = 0.7;
+                testAudioElement.muted = false;
+            }
+            
+            result.innerHTML = '<div class="success">✅ Volume set to 70% and unmuted!</div>';
+        }
+
+        function testAudioContext() {
+            const result = document.getElementById('contextResult');
+            
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                const state = audioContext.state;
+                let message = '';
+                
+                if (state === 'suspended') {
+                    message = '⚠️ Audio Context is suspended - user interaction needed';
+                } else if (state === 'running') {
+                    message = '✅ Audio Context is running perfectly!';
+                } else if (state === 'closed') {
+                    message = '❌ Audio Context is closed - needs restart';
+                } else {
+                    message = `ℹ️ Audio Context state: ${state}`;
+                }
+                
+                result.innerHTML = `<div class="${state === 'running' ? 'success' : 'warning'}">${message}</div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Audio Context Error: ${error.message}</div>`;
+            }
+        }
+
+        function fixAudioContext() {
+            const result = document.getElementById('contextResult');
+            
+            try {
+                if (audioContext && audioContext.state === 'suspended') {
+                    audioContext.resume().then(() => {
+                        result.innerHTML = '<div class="success">✅ Audio Context resumed successfully!</div>';
+                    });
+                } else if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    result.innerHTML = '<div class="success">✅ New Audio Context created!</div>';
+                } else {
+                    result.innerHTML = '<div class="success">✅ Audio Context is already working!</div>';
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Fix failed: ${error.message}</div>`;
+            }
+        }
+
+        function playTestSound() {
+            const result = document.getElementById('soundResult');
+            const progressContainer = document.getElementById('audioProgress');
+            const progressBar = document.getElementById('progressBar');
+            
+            result.innerHTML = '<div class="warning">🔊 Playing test beep... (आवाज सुनाई देनी चाहिए)</div>';
+            
+            // Create a simple beep using Web Audio API
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 1);
+                
+                // Show progress
+                progressContainer.style.display = 'block';
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    progressBar.style.width = progress + '%';
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        progressContainer.style.display = 'none';
+                        result.innerHTML = '<div class="success">✅ Test beep completed! आवाज सुनाई दी?</div>';
+                    }
+                }, 100);
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">❌ Beep test failed: ${error.message}</div>`;
+            }
+        }
+
+        function playTestTone() {
+            const result = document.getElementById('soundResult');
+            
+            // Create audio data URL for a simple tone
+            const audioData = "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+X1um4gBySJ0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+ltryxnkpBSl+zPLaizsIGGS57OihUgwKTKXh8bllHgg2jdXzzn0vBSF1xe/eizEIGF+z6OyrWBUIQ5zd8sFuIAUuhM/z0YU2Bhxqvu7mnEoODlOq5O+zYBoGPJPY88p9KwUme8rx3I4+CRZiturqpVINCkml4PK8aB4GM4/U8tGAMQYfcsLu45ZFDBFYr+ftrVoWCECY3PLEcSEELYTO89SGOQcZZ7zr6aRRDAhJpN/wsmEaATaKzvHOfy4DJ3nE7N2LOggUYLPl6qJVEgxEm9vau3EiBC2Ay/DyvnkgBjiH0fHLgTkHHWq+8OyUTQ0PVKzk7K9dFAU9k9bwynInBSJ3w+veizIIG2ey7OOeHgU4grRg=="
+            testAudioElement.src = audioData;
+            testAudioElement.volume = document.getElementById('testVolume').value / 100;
+            
+            result.innerHTML = '<div class="warning">🎵 Playing test tone... (टोन सुनाई देना चाहिए)</div>';
+            
+            testAudioElement.play()
+                .then(() => {
+                    result.innerHTML = '<div class="success">✅ Test tone playing! टोन सुनाई दे रहा है?</div>';
+                })
+                .catch(error => {
+                    result.innerHTML = `<div class="error">❌ Tone test failed: ${error.message}</div>`;
+                });
+        }
+
+        function checkPermissions() {
+            const result = document.getElementById('permissionResult');
+            
+            if ('permissions' in navigator) {
+                navigator.permissions.query({name: 'microphone'}).then(function(result) {
+                    // This is for microphone, but gives us an idea about audio permissions
+                    result.innerHTML = `<div class="success">✅ Permission system is working</div>`;
+                });
+            }
+            
+            // Check autoplay policy
+            const audio = new Audio();
+            audio.volume = 0.1;
+            
+            audio.play()
+                .then(() => {
+                    result.innerHTML = '<div class="success">✅ Audio autoplay is allowed</div>';
+                    audio.pause();
+                })
+                .catch(() => {
+                    result.innerHTML = '<div class="warning">⚠️ Audio requires user interaction (normal behavior)</div>';
+                });
+        }
+
+        function requestPermissions() {
+            const result = document.getElementById('permissionResult');
+            
+            // Try to resume audio context
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume().then(() => {
+                    result.innerHTML = '<div class="success">✅ Audio permissions granted!</div>';
+                });
+            } else {
+                result.innerHTML = '<div class="success">✅ No additional permissions needed</div>';
+            }
+        }
+
+        function openMusicPlayer() {
+            const newWindow = window.open('complete-music-player.html', '_blank');
+            if (!newWindow) {
+                alert('Please allow popups and try again, या manually open complete-music-player.html');
+            }
+        }
+
+        // Auto-fix common issues
+        window.addEventListener('load', function() {
+            // Auto-fix volume
+            setTimeout(() => {
+                fixVolume();
+                fixAudioContext();
+            }, 2000);
+        });
+
+        // Handle user interaction to fix audio context
+        document.addEventListener('click', function() {
+            if (audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>

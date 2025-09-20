@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="advanced-style.css">
+</head>
+<body class="dark-theme">
+    <div class="music-player">
+        <!-- Header with controls -->
+        <header class="player-header">
+            <div class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </div>
+            <h1>Advanced Music Player</h1>
+            <div class="upload-section">
+                <input type="file" id="fileInput" multiple accept="audio/*" hidden>
+                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-plus"></i> Add Music
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Container -->
+        <div class="player-container">
+            <!-- Left Panel - Playlist -->
+            <div class="left-panel">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search songs...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                
+                <div class="playlist-controls">
+                    <button class="playlist-btn" id="shuffleBtn"><i class="fas fa-random"></i></button>
+                    <button class="playlist-btn" id="repeatBtn"><i class="fas fa-redo"></i></button>
+                    <button class="playlist-btn" id="clearBtn"><i class="fas fa-trash"></i></button>
+                </div>
+
+                <div class="playlist" id="playlist">
+                    <!-- Playlist items will be generated dynamically -->
+                </div>
+            </div>
+
+            <!-- Center Panel - Player -->
+            <div class="center-panel">
+                <!-- Drag & Drop Area -->
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & Drop MP3 files here</p>
+                </div>
+
+                <!-- Current Track Display -->
+                <div class="current-track">
+                    <div class="track-art" id="trackArt">
+                        <canvas id="visualizer" width="250" height="250"></canvas>
+                    </div>
+                    <div class="track-info">
+                        <div class="track-title" id="trackTitle">Select a song</div>
+                        <div class="track-artist" id="trackArtist">Artist</div>
+                        <div class="track-album" id="trackAlbum">Album</div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <span class="time current-time">0:00</span>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                        <input type="range" id="progressSlider" min="0" max="100" value="0">
+                    </div>
+                    <span class="time total-time">0:00</span>
+                </div>
+
+                <!-- Main Controls -->
+                <div class="main-controls">
+                    <button class="control-btn" id="prevBtn"><i class="fas fa-step-backward"></i></button>
+                    <button class="control-btn play-btn" id="playBtn"><i class="fas fa-play"></i></button>
+                    <button class="control-btn" id="nextBtn"><i class="fas fa-step-forward"></i></button>
+                </div>
+
+                <!-- Additional Controls -->
+                <div class="additional-controls">
+                    <div class="volume-control">
+                        <i class="fas fa-volume-down"></i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    
+                    <div class="speed-control">
+                        <label>Speed:</label>
+                        <select id="speedControl">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Equalizer -->
+            <div class="right-panel">
+                <h3>Equalizer</h3>
+                <div class="equalizer-presets">
+                    <select id="eqPresets">
+                        <option value="flat">Flat</option>
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="jazz">Jazz</option>
+                        <option value="classical">Classical</option>
+                        <option value="electronic">Electronic</option>
+                    </select>
+                </div>
+                
+                <div class="equalizer-controls" id="equalizerControls">
+                    <!-- Equalizer sliders will be generated -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Element -->
+    <audio id="audioPlayer" preload="metadata"></audio>
+    
+    <script src="advanced-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynk Music - Navigation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #FF6B35, #000000);
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);
+            max-width: 600px;
+            width: 90%;
+        }
+        h1 {
+            color: #FF6B35;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .nav-card {
+            background: linear-gradient(45deg, #FF6B35, #FF9500);
+            padding: 20px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
+        }
+        .nav-card i {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .status {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        .info {
+            background: rgba(33, 150, 243, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2196F3;
+        }
+        .server-info {
+            background: rgba(255, 107, 53, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #FF6B35;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-music"></i> Wynk Music</h1>
+        
+        <div class="status">
+            <strong>✅ Server Status: Running on Port 8000</strong>
+        </div>
+        
+        <div class="info">
+            <strong>📍 Access URLs:</strong><br>
+            Main Player: <code>http://localhost:8000/wynk-index.html</code><br>
+            Test Suite: <code>http://localhost:8000/test-complete.html</code><br>
+            Debug Console: <code>http://localhost:8000/debug-wynk.html</code>
+        </div>
+        
+        <div class="nav-grid">
+            <a href="wynk-index.html" class="nav-card">
+                <i class="fas fa-play-circle"></i>
+                <div>Main Player</div>
+                <small>Full Wynk Music Experience</small>
+            </a>
+            
+            <a href="test-complete.html" class="nav-card">
+                <i class="fas fa-vial"></i>
+                <div>Test Suite</div>
+                <small>Comprehensive Testing</small>
+            </a>
+            
+            <a href="debug-wynk.html" class="nav-card">
+                <i class="fas fa-bug"></i>
+                <div>Debug Console</div>
+                <small>Development Tools</small>
+            </a>
+        </div>
+        
+        <div class="server-info">
+            <strong>🚀 Quick Start:</strong><br>
+            1. Click "Main Player" above for the full experience<br>
+            2. Use "Test Suite" to verify all features work<br>
+            3. Use "Debug Console" for troubleshooting<br><br>
+            
+            <strong>🎵 Features Available:</strong><br>
+            • 8 Bollywood songs with beautiful artwork<br>
+            • Audio visualizer with 3 modes<br>
+            • Lyrics display system<br>
+            • Volume control & progress tracking<br>
+            • Search functionality<br>
+            • Beautiful Wynk orange theme
+        </div>
+        
+        <div style="margin-top: 30px;">
+            <button onclick="window.location.href='wynk-index.html'" class="nav-card" style="width: 100%;">
+                <i class="fas fa-rocket"></i>
+                🎵 Launch Wynk Music Player 🎵
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-redirect to main player after 5 seconds if user doesn't click
+        setTimeout(() => {
+            if (confirm('Auto-redirect to Wynk Music Player?')) {
+                window.location.href = 'wynk-index.html';
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fab fa-spotify"></i>
+                    <h1>Music Player</h1>
+                </div>
+            </div>
+            
+            <div class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-search"></i>
+                            <span>Search</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-book-open"></i>
+                            <span>Your Library</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-playlists">
+                <div class="playlist-header">
+                    <h3>Playlists</h3>
+                    <button class="create-playlist" id="create-playlist-btn">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                
+                <!-- Upload Music Section -->
+                <div class="upload-section">
+                    <label for="music-upload" class="upload-btn">
+                        <i class="fas fa-upload"></i>
+                        <span>Upload Music</span>
+                        <input type="file" id="music-upload" accept="audio/*" multiple style="display: none;">
+                    </label>
+                </div>
+                
+                <ul class="playlist-list">
+                    <li class="playlist-item">
+                        <i class="fas fa-heart"></i>
+                        <span>Liked Songs</span>
+                    </li>
+                    <li class="playlist-item">
+                        <i class="fas fa-music"></i>
+                        <span>My Playlist #1</span>
+                    </li>
+                    <li class="playlist-item">
+                        <i class="fas fa-music"></i>
+                        <span>Favorites</span>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-nav">
+                    <button class="nav-btn" id="back-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="nav-btn" id="forward-btn">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search for songs, artists, or albums" id="search-input">
+                    </div>
+                </div>
+                
+                <div class="user-menu">
+                    <button class="theme-toggle" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button class="user-btn">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="content-area">
+                <section class="home-section" id="home-view">
+                    <h2>Good afternoon</h2>
+                    
+                    <div class="quick-picks">
+                        <div class="quick-pick-item">
+                            <div class="album-art"></div>
+                            <span>Liked Songs</span>
+                        </div>
+                        <div class="quick-pick-item">
+                            <div class="album-art"></div>
+                            <span>Recently Played</span>
+                        </div>
+                        <div class="quick-pick-item">
+                            <div class="album-art"></div>
+                            <span>Daily Mix 1</span>
+                        </div>
+                    </div>
+                    
+                    <section class="music-section">
+                        <div class="section-header">
+                            <h3>Recently Played</h3>
+                            <div class="filter-controls">
+                                <select id="genre-filter" class="filter-select">
+                                    <option value="">All Genres</option>
+                                    <option value="jazz">Jazz</option>
+                                    <option value="electronic">Electronic</option>
+                                    <option value="acoustic">Acoustic</option>
+                                    <option value="ambient">Ambient</option>
+                                </select>
+                                <select id="artist-filter" class="filter-select">
+                                    <option value="">All Artists</option>
+                                </select>
+                                <button class="filter-btn" id="clear-filters">
+                                    <i class="fas fa-times"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div class="track-grid" id="track-grid">
+                            <!-- Tracks will be populated dynamically -->
+                        </div>
+                    </section>
+                </section>
+                
+                <section class="search-section hidden" id="search-view">
+                    <h2>Search Results</h2>
+                    <div class="search-results" id="search-results">
+                        <!-- Search results will be populated dynamically -->
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Now Playing Bar -->
+    <footer class="now-playing-bar">
+        <div class="now-playing-info">
+            <div class="track-info">
+                <div class="album-artwork" id="current-artwork"></div>
+                <div class="track-details">
+                    <div class="track-name" id="current-track">Select a song</div>
+                    <div class="track-artist" id="current-artist">No artist</div>
+                </div>
+            </div>
+            <button class="like-btn" id="like-btn">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
+        
+        <div class="player-controls">
+            <div class="control-buttons">
+                <button class="control-btn" id="shuffle-btn">
+                    <i class="fas fa-random"></i>
+                </button>
+                <button class="control-btn" id="prev-btn">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-pause-btn" id="play-pause-btn">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="next-btn">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+                <button class="control-btn" id="repeat-btn">
+                    <i class="fas fa-redo"></i>
+                </button>
+            </div>
+            
+            <div class="progress-container">
+                <span class="time-elapsed" id="time-elapsed">0:00</span>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                        <div class="progress-handle" id="progress-handle"></div>
+                    </div>
+                </div>
+                <span class="time-total" id="time-total">0:00</span>
+            </div>
+        </div>
+        
+        <div class="extra-controls">
+            <button class="control-btn" id="equalizer-btn">
+                <i class="fas fa-sliders-h"></i>
+            </button>
+            <button class="control-btn" data-modal="lyricsModal" title="Show Lyrics">
+                <i class="fas fa-music"></i>
+            </button>
+            <button class="control-btn" data-modal="visualizerModal" title="Audio Visualizer">
+                <i class="fas fa-wave-square"></i>
+            </button>
+            <button class="control-btn" id="queue-btn">
+                <i class="fas fa-list"></i>
+            </button>
+            <button class="control-btn" id="devices-btn">
+                <i class="fas fa-desktop"></i>
+            </button>
+            <div class="volume-control">
+                <button class="control-btn" id="volume-btn">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <div class="volume-slider-container">
+                    <div class="volume-slider" id="volume-slider">
+                        <div class="volume-fill" id="volume-fill"></div>
+                        <div class="volume-handle" id="volume-handle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Audio Element -->
+    <audio id="audio-player" preload="metadata"></audio>
+    
+    <!-- Playlist Creation Modal -->
+    <div class="modal hidden" id="playlist-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Playlist</h3>
+                <button class="modal-close" id="close-playlist-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="playlist-name" placeholder="Playlist name" class="modal-input">
+                <textarea id="playlist-description" placeholder="Description (optional)" class="modal-textarea"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-playlist">Cancel</button>
+                <button class="btn btn-primary" id="create-playlist">Create Playlist</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Equalizer Modal -->
+    <div class="modal hidden" id="equalizer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Equalizer</h3>
+                <button class="modal-close" id="close-equalizer-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="equalizer-controls">
+                    <div class="eq-band">
+                        <label>60Hz</label>
+                        <input type="range" class="eq-slider" min="-20" max="20" value="0" data-frequency="60">
+                        <span class="eq-value">0dB</span>
+                    </div>
+                    <div class="eq-band">
+                        <label>230Hz</label>
+                        <input type="range" class="eq-slider" min="-20" max="20" value="0" data-frequency="230">
+                        <span class="eq-value">0dB</span>
+                    </div>
+                    <div class="eq-band">
+                        <label>910Hz</label>
+                        <input type="range" class="eq-slider" min="-20" max="20" value="0" data-frequency="910">
+                        <span class="eq-value">0dB</span>
+                    </div>
+                    <div class="eq-band">
+                        <label>4kHz</label>
+                        <input type="range" class="eq-slider" min="-20" max="20" value="0" data-frequency="4000">
+                        <span class="eq-value">0dB</span>
+                    </div>
+                    <div class="eq-band">
+                        <label>14kHz</label>
+                        <input type="range" class="eq-slider" min="-20" max="20" value="0" data-frequency="14000">
+                        <span class="eq-value">0dB</span>
+                    </div>
+                </div>
+                <div class="eq-presets">
+                    <button class="preset-btn" data-preset="flat">Flat</button>
+                    <button class="preset-btn" data-preset="rock">Rock</button>
+                    <button class="preset-btn" data-preset="jazz">Jazz</button>
+                    <button class="preset-btn" data-preset="classical">Classical</button>
+                    <button class="preset-btn" data-preset="electronic">Electronic</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lyrics Modal -->
+    <div id="lyricsModal" class="modal">
+        <div class="modal-content lyrics-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-music"></i> Lyrics</h2>
+                <span class="close" data-modal="lyricsModal">&times;</span>
+            </div>
+            <div class="lyrics-container">
+                <div class="lyrics-header">
+                    <img id="lyricsArtwork" src="" alt="" class="lyrics-artwork">
+                    <div class="lyrics-info">
+                        <h3 id="lyricsTitle">Song Title</h3>
+                        <p id="lyricsArtist">Artist Name</p>
+                        <p id="lyricsAlbum">Album Name</p>
+                    </div>
+                </div>
+                <div class="lyrics-text" id="lyricsText">
+                    <p>Click on a track to view lyrics...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualizer Modal -->
+    <div id="visualizerModal" class="modal">
+        <div class="modal-content visualizer-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-wave-square"></i> Audio Visualizer</h2>
+                <span class="close" data-modal="visualizerModal">&times;</span>
+            </div>
+            <div class="visualizer-container">
+                <canvas id="visualizerCanvas" width="800" height="400"></canvas>
+                <div class="visualizer-controls">
+                    <button class="visualizer-btn" onclick="window.musicPlayer.toggleVisualizer()">
+                        <i class="fas fa-play"></i> Start Visualizer
+                    </button>
+                    <button class="visualizer-btn" onclick="connectMusicToVisualizer()" style="background: #e74c3c;">
+                        <i class="fas fa-music"></i> Start Music + Visualizer
+                    </button>
+                    <select id="visualizerType">
+                        <option value="bars">Frequency Bars</option>
+                        <option value="wave">Waveform</option>
+                        <option value="circle">Circular</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="src/scripts/main.js"></script>
+    <script src="src/scripts/enhancer.js"></script>
+    <script src="src/scripts/debug.js"></script>
+</body>
+</html>

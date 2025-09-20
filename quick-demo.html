@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Music File Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .upload-area {
+            border: 3px dashed #4ecdc4;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: #ff6b6b;
+            background: rgba(255,255,255,0.1);
+        }
+        .btn {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1.1rem;
+        }
+        .file-list {
+            text-align: left;
+            margin: 20px 0;
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .file-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎵 Quick Music File Demo</h1>
+        <p>Add your MP3 files here to test them quickly!</p>
+        
+        <div class="upload-area" id="dropZone">
+            <h3>📁 Drop MP3 Files Here</h3>
+            <p>या click करके files select करें</p>
+            <input type="file" id="fileInput" multiple accept="audio/*" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">
+                Choose Files
+            </button>
+        </div>
+        
+        <div id="fileList" class="file-list" style="display: none;">
+            <h3>📋 Added Files:</h3>
+            <div id="files"></div>
+        </div>
+        
+        <div id="audioPlayer" style="margin: 20px 0;">
+            <audio controls style="width: 100%; margin: 10px 0;">
+                <source id="audioSource" src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+        
+        <button class="btn" onclick="openMusicPlayer()" style="background: linear-gradient(45deg, #6c5ce7, #a29bfe); font-size: 1.2rem; padding: 20px 40px;">
+            🚀 Open Full Music Player
+        </button>
+        
+        <div style="margin-top: 30px; padding: 20px; background: rgba(255,193,7,0.2); border-radius: 10px;">
+            <h3>💡 Tips for Best Experience:</h3>
+            <ul style="text-align: left;">
+                <li><strong>MP3 Format:</strong> Works best with MP3 files</li>
+                <li><strong>File Size:</strong> Keep under 10MB for smooth loading</li>
+                <li><strong>Metadata:</strong> Files with title/artist info work better</li>
+                <li><strong>Multiple Files:</strong> Add 3-5 songs to test playlist</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const filesDiv = document.getElementById('files');
+        const audioSource = document.getElementById('audioSource');
+        const audioPlayer = document.querySelector('audio');
+        
+        let uploadedFiles = [];
+
+        // Drag and Drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#ff6b6b';
+            dropZone.style.background = 'rgba(255,255,255,0.2)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#4ecdc4';
+            dropZone.style.background = 'transparent';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#4ecdc4';
+            dropZone.style.background = 'transparent';
+            
+            const files = Array.from(e.dataTransfer.files);
+            handleFiles(files);
+        });
+
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            const audioFiles = files.filter(file => file.type.startsWith('audio/'));
+            
+            if (audioFiles.length === 0) {
+                alert('कोई audio files नहीं मिली! MP3, WAV, या M4A files try करें।');
+                return;
+            }
+
+            audioFiles.forEach(file => {
+                uploadedFiles.push(file);
+                addFileToList(file);
+            });
+
+            fileList.style.display = 'block';
+            
+            // Auto-play first file
+            if (uploadedFiles.length === 1) {
+                playFile(uploadedFiles[0]);
+            }
+        }
+
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            fileItem.innerHTML = `
+                <div>
+                    <strong>${file.name}</strong><br>
+                    <small>${(file.size / (1024*1024)).toFixed(2)} MB</small>
+                </div>
+                <button class="btn" onclick="playFile(uploadedFiles[${uploadedFiles.length - 1}])" style="padding: 8px 15px; font-size: 0.9rem;">
+                    ▶️ Play
+                </button>
+            `;
+            
+            filesDiv.appendChild(fileItem);
+        }
+
+        function playFile(file) {
+            const url = URL.createObjectURL(file);
+            audioSource.src = url;
+            audioPlayer.load();
+            
+            audioPlayer.play().then(() => {
+                console.log('Playing:', file.name);
+            }).catch(error => {
+                console.error('Playback error:', error);
+                alert('Playback error: ' + error.message);
+            });
+        }
+
+        function openMusicPlayer() {
+            if (uploadedFiles.length > 0) {
+                // Store files in sessionStorage for the music player to use
+                const fileData = uploadedFiles.map(file => ({
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                }));
+                sessionStorage.setItem('demoFiles', JSON.stringify(fileData));
+                
+                alert(`${uploadedFiles.length} files ready! अब music player में इन्हें add करें।`);
+            }
+            
+            window.open('complete-music-player.html', '_blank');
+        }
+
+        // Show status
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Music demo ready!');
+        });
+    </script>
+</body>
+</html>

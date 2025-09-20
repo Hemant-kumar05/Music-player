@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wynk Music Debug</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(180deg, #000000, #111111);
+            color: white;
+            padding: 20px;
+            margin: 0;
+        }
+        .debug-section {
+            background: #222;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #FF6B35;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        .info { color: #2196F3; }
+        .debug-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .track-preview {
+            background: #333;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .track-preview img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        #debugOutput {
+            background: #000;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #444;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Wynk Music Debug Console</h1>
+    
+    <div class="debug-section">
+        <h2>🔍 System Check</h2>
+        <div id="systemCheck">
+            <p class="info">⏳ Running system diagnostics...</p>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h2>🎼 Music Tracks</h2>
+        <div id="tracksPreview">
+            <p class="info">⏳ Loading music library...</p>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h2>🖥️ DOM Elements</h2>
+        <div id="domCheck">
+            <p class="info">⏳ Checking DOM elements...</p>
+        </div>
+    </div>
+
+    <div class="debug-section">
+        <h2>📝 Console Output</h2>
+        <div id="debugOutput"></div>
+    </div>
+
+    <div class="debug-section">
+        <h2>🎮 Test Controls</h2>
+        <button onclick="testPlayFirst()" style="background: #FF6B35; color: white; border: none; padding: 12px 24px; border-radius: 6px; margin: 8px; cursor: pointer;">
+            ▶️ Test Play First Track
+        </button>
+        <button onclick="testVisualizer()" style="background: #FF6B35; color: white; border: none; padding: 12px 24px; border-radius: 6px; margin: 8px; cursor: pointer;">
+            🎨 Test Visualizer
+        </button>
+        <button onclick="testSearch()" style="background: #FF6B35; color: white; border: none; padding: 12px 24px; border-radius: 6px; margin: 8px; cursor: pointer;">
+            🔍 Test Search
+        </button>
+        <button onclick="refreshDebug()" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 6px; margin: 8px; cursor: pointer;">
+            🔄 Refresh Debug
+        </button>
+    </div>
+
+    <script src="src/scripts/main.js"></script>
+    <script>
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const debugOutput = document.getElementById('debugOutput');
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ');
+            debugOutput.innerHTML += `<div style="color: #4CAF50;">[${timestamp}] ${message}</div>`;
+            debugOutput.scrollTop = debugOutput.scrollHeight;
+        };
+
+        console.error = function(...args) {
+            originalLog.apply(console, args);
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ');
+            debugOutput.innerHTML += `<div style="color: #f44336;">[${timestamp}] ERROR: ${message}</div>`;
+            debugOutput.scrollTop = debugOutput.scrollHeight;
+        };
+
+        function runSystemCheck() {
+            const systemCheck = document.getElementById('systemCheck');
+            let html = '';
+
+            // Check if MusicPlayer exists
+            if (typeof MusicPlayer !== 'undefined') {
+                html += '<p class="success">✅ MusicPlayer class loaded</p>';
+            } else {
+                html += '<p class="error">❌ MusicPlayer class not found</p>';
+            }
+
+            // Check if window.musicPlayer exists
+            if (window.musicPlayer) {
+                html += '<p class="success">✅ Music player instance created</p>';
+                html += `<p class="info">📊 Playlist length: ${window.musicPlayer.playlist.length}</p>`;
+            } else {
+                html += '<p class="error">❌ Music player instance not found</p>';
+            }
+
+            // Check audio files
+            const testAudio = new Audio();
+            testAudio.src = 'assets/audio/Aabaad_Barbaad.mp3';
+            testAudio.addEventListener('canplay', () => {
+                html += '<p class="success">✅ Audio files accessible</p>';
+                systemCheck.innerHTML = html;
+            });
+            testAudio.addEventListener('error', () => {
+                html += '<p class="error">❌ Audio files not accessible</p>';
+                systemCheck.innerHTML = html;
+            });
+
+            systemCheck.innerHTML = html;
+        }
+
+        function showTracksPreview() {
+            const tracksPreview = document.getElementById('tracksPreview');
+            
+            if (window.musicPlayer && window.musicPlayer.playlist.length > 0) {
+                let html = `<p class="success">✅ Found ${window.musicPlayer.playlist.length} tracks</p>`;
+                html += '<div class="debug-grid">';
+                
+                window.musicPlayer.playlist.slice(0, 6).forEach(track => {
+                    html += `
+                        <div class="track-preview">
+                            <img src="${track.artwork}" alt="${track.title}" onerror="this.style.display='none'">
+                            <div style="font-weight: bold; font-size: 14px; margin-bottom: 4px;">${track.title}</div>
+                            <div style="color: #bbb; font-size: 12px;">${track.artist}</div>
+                            <div style="color: #FF6B35; font-size: 11px; margin-top: 4px;">${track.genre || 'Bollywood'}</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                tracksPreview.innerHTML = html;
+            } else {
+                tracksPreview.innerHTML = '<p class="error">❌ No tracks loaded</p>';
+            }
+        }
+
+        function checkDOMElements() {
+            const domCheck = document.getElementById('domCheck');
+            let html = '';
+
+            const elements = [
+                { name: 'musicGrid', id: 'musicGrid' },
+                { name: 'playBtn', id: 'playBtn' },
+                { name: 'audioPlayer', id: 'audioPlayer' },
+                { name: 'currentTrackName', id: 'currentTrackName' },
+                { name: 'currentTrackArtist', id: 'currentTrackArtist' },
+                { name: 'currentTrackImage', id: 'currentTrackImage' }
+            ];
+
+            elements.forEach(element => {
+                const el = document.getElementById(element.id);
+                if (el) {
+                    html += `<p class="success">✅ ${element.name} found</p>`;
+                } else {
+                    html += `<p class="error">❌ ${element.name} not found</p>`;
+                }
+            });
+
+            domCheck.innerHTML = html;
+        }
+
+        function testPlayFirst() {
+            if (window.musicPlayer && window.musicPlayer.playlist.length > 0) {
+                console.log('🧪 Testing first track playback...');
+                window.musicPlayer.playTrack(0);
+            } else {
+                console.error('No music player or tracks available');
+            }
+        }
+
+        function testVisualizer() {
+            console.log('🧪 Testing visualizer...');
+            if (window.musicPlayer && window.musicPlayer.initializeVisualizer) {
+                window.musicPlayer.initializeVisualizer();
+            } else {
+                console.error('Visualizer not available');
+            }
+        }
+
+        function testSearch() {
+            console.log('🧪 Testing search functionality...');
+            if (window.musicPlayer && window.musicPlayer.playlist.length > 0) {
+                const searchTerm = window.musicPlayer.playlist[0].title.substring(0, 5);
+                console.log(`Searching for: ${searchTerm}`);
+                // Simulate search
+                const results = window.musicPlayer.playlist.filter(track => 
+                    track.title.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+                console.log(`Found ${results.length} results`);
+            }
+        }
+
+        function refreshDebug() {
+            console.log('🔄 Refreshing debug information...');
+            runSystemCheck();
+            setTimeout(() => {
+                showTracksPreview();
+                checkDOMElements();
+            }, 500);
+        }
+
+        // Initialize debug when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🔍 Debug page loaded');
+            setTimeout(() => {
+                runSystemCheck();
+                showTracksPreview();
+                checkDOMElements();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #121212;
+            color: white;
+        }
+        .debug-panel {
+            background: #282828;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-btn {
+            background: #1db954;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background: #1ed760;
+        }
+        #log {
+            background: #181818;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Music Player Debug Panel</h1>
+    
+    <div class="debug-panel">
+        <h3>Quick Tests</h3>
+        <button class="test-btn" onclick="testAudio()">Test Audio</button>
+        <button class="test-btn" onclick="testImages()">Test Images</button>
+        <button class="test-btn" onclick="testClicks()">Test Clicks</button>
+        <button class="test-btn" onclick="clearLog()">Clear Log</button>
+        <br><br>
+        <a href="index.html" style="color: #1db954;">← Back to Music Player</a>
+    </div>
+    
+    <div class="debug-panel">
+        <h3>Console Log</h3>
+        <div id="log"></div>
+    </div>
+    
+    <script>
+        // Override console.log to show in debug panel
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logDiv = document.getElementById('log');
+        
+        function addToLog(message, type = 'log') {
+            const div = document.createElement('div');
+            div.style.color = type === 'error' ? '#ff4444' : '#ffffff';
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog(args.join(' '), 'error');
+        };
+        
+        function testAudio() {
+            console.log('Testing audio playback...');
+            const audio = new Audio('https://www.kozco.com/tech/LRMonoPhase4.wav');
+            audio.play().then(() => {
+                console.log('✓ Audio test successful');
+                setTimeout(() => audio.pause(), 2000);
+            }).catch(error => {
+                console.error('✗ Audio test failed:', error);
+            });
+        }
+        
+        function testImages() {
+            console.log('Testing image loading...');
+            const img = new Image();
+            img.onload = () => console.log('✓ Image test successful');
+            img.onerror = () => console.error('✗ Image test failed');
+            img.src = 'https://picsum.photos/300/300?random=1';
+        }
+        
+        function testClicks() {
+            console.log('Testing click functionality...');
+            console.log('Music Player instance:', window.musicPlayer ? '✓ Found' : '✗ Not found');
+            
+            if (window.musicPlayer) {
+                console.log('Playlist length:', window.musicPlayer.playlist.length);
+                console.log('Track grid element:', window.musicPlayer.trackGrid ? '✓ Found' : '✗ Not found');
+            }
+        }
+        
+        function clearLog() {
+            logDiv.innerHTML = '';
+        }
+        
+        // Load the main music player script
+        const script = document.createElement('script');
+        script.src = 'src/scripts/main.js';
+        document.head.appendChild(script);
+        
+        console.log('Debug panel loaded');
+    </script>
+</body>
+</html>
